@@ -6,10 +6,10 @@ _file_marker="/var/lib/mysql/.mysql-configured"
 
 if [ ! -f "$_file_marker" ]; then
     /etc/init.d/mysql start
-    mysql -uroot -p"MYSQL_PASSWORD" -e "CREATE USER 'zabbix'@'localhost' IDENTIFIED BY 'zabbix';" 
-    mysql -uroot -p"$MYSQL_PASSWORD" -e "create database zabbix charset utf8;"
-    mysql -uroot -p"$MYSQL_PASSWORD" -e "grant all privileges on zabbix.* to zabbix@localhost identified by 'zabbix';"
-    mysql -uroot -p"$MYSQL_PASSWORD" -e "flush privileges"
+    mysql -u root -p"MYSQL_PASSWORD" -e "CREATE USER 'zabbix'@'localhost' IDENTIFIED BY 'zabbix';" 
+    mysql -u root -p"$MYSQL_PASSWORD" -e "create database zabbix charset utf8;"
+    mysql -u root -p"$MYSQL_PASSWORD" -e "grant all privileges on zabbix.* to 'zabbix'@'localhost' identified by 'zabbix';"
+    mysql -u root -p"$MYSQL_PASSWORD" -e "flush privileges;"
     
     /etc/init.d/mysql restart
     
