@@ -1,0 +1,27 @@
+et init
+
+set httpd
+	port 2812
+	allow myuser:mypassword
+
+check process mysqld with pidfile /var/run/mysqld/mysqld.pid
+  every 2 cycles
+	start program = "/etc/init.d/mysql start"
+	stop program = "/etc/init.d/mysql stop"
+
+check process zabbix-server with pidfile /var/run/zabbix/zabbix_server.pid
+  every 2 cycles
+	start program = "/etc/init.d/zabbix-server start"
+	stop program = "/etc/init.d/zabbix-server stop"
+  depends on mysqld
+
+check process zabbix-agent with pidfile /var/run/zabbix/zabbix_agentd.pid
+  every 2 cycles
+	start program = "/etc/init.d/zabbix-agent start"
+	stop program = "/etc/init.d/zabbix-agent stop"
+
+check process apache2 with pidfile /var/run/apache2/apache2.pid
+  every 2 cycles
+	start program = "/etc/init.d/apache2 start"
+	stop program = "/etc/init.d/apache2 stop"
+	depends on zabbix-server
