@@ -16,22 +16,32 @@ RUN apt-get install -yV \
     zabbix-server-mysql \
     zabbix-frontend-php \
     zabbix-agent \
+    php5-mysql \
     monit \
     --no-install-recommends
 
 COPY ./apache/zabbix.conf /etc/apache2/conf-available/zabbix.conf
 RUN ln -s /etc/apache2/conf-available/zabbix.conf /etc/apache2/conf-enabled/
 
+COPY ./zabbix/zabbix-server /etc/default/zabbix-server
+COPY ./zabbix/zabbix_server.conf /etc/zabbix/zabbix_server.conf
+COPY ./zabbix/zabbix.conf.php /etc/zabbix/zabbix.conf.php
+
 COPY ./sql/schema.sql /root/
 COPY ./sql/images.sql /root/
 COPY ./sql/data.sql /root/
 
+COPY ./monit/monitrc /etc/monitrc
+RUN chmod 600 /etc/monitrc
+RUN mkdir /var/run/zabbix
+RUN chmod 775 /var/run/zabbix
+
+VOLUME ["/var/lib/mysql", "/usr/lib/zabbix/alertscripts", "/usr/lib/zabbix/externalscripts", "/etc/zabbix/zabbix_agentd.d"]
+
 ADD ./scripts/run.sh /bin/start-zabbix
 RUN chmod 755 /bin/start-zabbix
 
-ADD ./monit/monitrc /etc/monitrc
-RUN chmod 600 /etc/monitrc
-
-EXPOSE 10051 10052 80
-ENTRYPOINT ["/bin/bash"]
+EXPOSE 10051 10052 80 2812
+ENTRYPOINT ["/bin/start-zabbix"]
+CMD ["run"]
 

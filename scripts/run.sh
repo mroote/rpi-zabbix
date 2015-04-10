@@ -1,17 +1,23 @@
 #!/bin/bash
+
 export MYSQL_PASSWORD="zabbix123"
 
 _file_marker="/var/lib/mysql/.mysql-configured"
 
-if [ ! -f "$_file_marker" ] then
-    /etc/init.d/mysql restart
-    
-    mysqladmin -uroot -p$MYSQL_PASSWORD
+if [ ! -f "$_file_marker" ]; then
+    /etc/init.d/mysql start
+    mysql -uroot -p"MYSQL_PASSWORD" -e "CREATE USER 'zabbix'@'localhost' IDENTIFIED BY 'zabbix';" 
     mysql -uroot -p"$MYSQL_PASSWORD" -e "create database zabbix charset utf8;"
-    mysql -uroot -p"$MYSQL_PASSWORD" -e "grant all privileges on zabbix.* to zabbix@localhost identified by 'zabbix';
+    mysql -uroot -p"$MYSQL_PASSWORD" -e "grant all privileges on zabbix.* to zabbix@localhost identified by 'zabbix';"
     mysql -uroot -p"$MYSQL_PASSWORD" -e "flush privileges"
     
     /etc/init.d/mysql restart
+    
+    echo "Importing Databases"    
+    mysql -u root -p"$MYSQL_PASSWORD" zabbix < /root/schema.sql
+    mysql -u root -p"$MYSQL_PASSWORD" zabbix < /root/images.sql
+    mysql -u root -p"$MYSQL_PASSWORD" zabbix < /root/data.sql
+    /etc/init.d/mysql stop
     touch "$_file_marker"    
 fi
 
