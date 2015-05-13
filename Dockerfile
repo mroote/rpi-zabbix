@@ -36,7 +36,7 @@ RUN chmod 600 /etc/monitrc
 RUN mkdir /var/run/zabbix
 RUN chmod 775 /var/run/zabbix
 
-#VOLUME ["/var/lib/mysql", "/usr/lib/zabbix/alertscripts", "/usr/lib/zabbix/externalscripts", "/etc/zabbix/zabbix_agentd.d"]
+VOLUME ["/var/lib/mysql", "/usr/lib/zabbix/alertscripts", "/usr/lib/zabbix/externalscripts", "/etc/zabbix/zabbix_agentd.d"]
 
 ADD ./scripts/run.sh /bin/start-zabbix
 RUN chmod 755 /bin/start-zabbix
